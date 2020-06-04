@@ -1,0 +1,170 @@
+
+<domain type='kvm'>
+  <name>alveo1a</name>
+  <uuid>46d57e3c-8000-430e-b7b4-bc20112f9ecb</uuid>
+  <title>alveo1a</title>
+  <memory unit='KiB'>167772160</memory>
+  <currentMemory unit='KiB'>167772160</currentMemory>
+  <vcpu placement='static'>16</vcpu>
+  <os>
+    <type arch='x86_64' machine='pc-q35-2.8'>hvm</type>
+    <boot dev='hd'/>
+    <bootmenu enable='yes' timeout='5000'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <cpu mode='host-passthrough' check='none'>
+    <topology sockets='1' cores='16' threads='1'/>
+  </cpu>
+  <clock offset='utc'>
+    <timer name='rtc' tickpolicy='catchup'/>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='hpet' present='no'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>restart</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/kvm</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw'/>
+      <source file='/srv/alveo1a/sda.raw'/>
+      <target dev='sda' bus='scsi'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw'/>
+      <source file='/srv/alveo1a/sdb.raw'/>
+      <target dev='sdb' bus='scsi'/>
+      <address type='drive' controller='0' bus='0' target='1' unit='0'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw'/>
+      <source file='/srv/alveo1a/sdc.raw'/>
+      <target dev='sdc' bus='scsi'/>
+      <address type='drive' controller='0' bus='0' target='2' unit='0'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw'/>
+      <source file='/srv/alveo1a/sdd.raw'/>
+      <target dev='sdd' bus='scsi'/>
+      <address type='drive' controller='0' bus='0' target='3' unit='0'/>
+    </disk>
+    <disk type='network' device='disk'>
+      <driver name='qemu' type='raw'/>
+      <source protocol='iscsi' name='iqn.1992-08.com.netapp:5481.60080e50001ff2000000000051aee24d/0'>
+        <host name='10.1.12.32' port='3260'/>
+        <initiator>
+          <iqn name='iqn.2020-01.ch.ethz:01:alveo1a'/>
+        </initiator>
+        <auth username='myname'>
+          <secret type='iscsi' usage='libvirtiscsi'/>
+        </auth>
+      </source>
+      <target dev='sde' bus='scsi'/>
+      <readonly/>
+      <alias name='ua-iscsi'/>
+      <address type='drive' controller='0' bus='0' target='4' unit='0'/>
+    </disk>
+    <controller type='scsi' index='0' model='virtio-scsi'>
+      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
+    </controller>
+    <controller type='sata' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
+    </controller>
+    <controller type='pci' index='0' model='pcie-root'/>
+    <controller type='pci' index='1' model='dmi-to-pci-bridge'>
+      <model name='i82801b11-bridge'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1e' function='0x0'/>
+    </controller>
+    <controller type='pci' index='2' model='pci-bridge'>
+      <model name='pci-bridge'/>
+      <target chassisNr='2'/>
+      <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
+    </controller>
+    <controller type='pci' index='3' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='3' port='0x10'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='pci' index='4' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='4' port='0x11'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x1'/>
+    </controller>
+    <controller type='pci' index='5' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='5' port='0x12'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x2'/>
+    </controller>
+    <controller type='pci' index='6' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='6' port='0x13'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x3'/>
+    </controller>
+    <controller type='virtio-serial' index='0'>
+      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    </controller>
+    <controller type='usb' index='0' model='nec-xhci'>
+      <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
+    </controller>
+    <interface type='network'>
+      <mac address='52:54:00:77:77:1a'/>
+      <source network='vswitch0'/>
+      <target dev='vport0-1a'/>
+      <model type='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x02' slot='0x01' function='0x0'/>
+    </interface>
+    <serial type='pty'>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+    </serial>
+    <console type='pty'>
+      <target type='serial' port='0'/>
+    </console>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='1'/>
+    </channel>
+    <input type='keyboard' bus='ps2'/>
+    <input type='mouse' bus='ps2'/>
+    <graphics type='vnc' port='10011' autoport='no' listen='127.0.0.1'>
+      <listen type='address' address='127.0.0.1'/>
+    </graphics>
+    <video>
+      <model type='cirrus' vram='16384' heads='1' primary='yes'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
+    </video>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source>
+        <address bus='1' device='2'/>
+      </source>
+      <address type='usb' bus='0' port='1'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x3b' slot='0x00' function='0x0'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x0' multifunction='on'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x3b' slot='0x00' function='0x1'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x1'/>
+    </hostdev>
+    <memballoon model='none'/>
+    <rng model='virtio'>
+      <rate bytes='1024' period='1000'/>
+      <backend model='random'>/dev/random</backend>
+      <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
+    </rng>
+  </devices>
+</domain>
